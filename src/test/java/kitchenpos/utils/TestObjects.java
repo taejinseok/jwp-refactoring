@@ -16,10 +16,7 @@ import kitchenpos.domain.TableGroup;
 
 public class TestObjects {
     public static Product createProduct(String name, BigDecimal price) {
-        final Product product = new Product();
-        product.setPrice(price);
-        product.setName(name);
-        return product;
+        return new Product(name, price);
     }
 
     public static MenuGroup createMenuGroup(String name) {
