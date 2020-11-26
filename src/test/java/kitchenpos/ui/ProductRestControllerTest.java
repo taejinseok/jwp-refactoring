@@ -26,7 +26,7 @@ class ProductRestControllerTest extends ControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", notNullValue(Long.class)))
                 .andExpect(jsonPath("$.name", is("치킨")))
-                .andExpect(jsonPath("$.price", is(16_000d)));
+                .andExpect(jsonPath("$.price", is(16_000)));
 
     }
 
