@@ -12,7 +12,14 @@ public class MenuGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    protected String name;
+
+    public MenuGroup() {
+    }
+
+    public MenuGroup(String name) {
+        this.name = name;
+    }
 
     public Long getId() {
         return id;

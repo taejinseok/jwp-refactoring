@@ -8,34 +8,36 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.test.context.ActiveProfiles;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.inmemory.InmemoryMenuDao;
-import kitchenpos.dao.inmemory.InmemoryMenuGroupDao;
-import kitchenpos.dao.inmemory.InmemoryMenuProductDao;
-import kitchenpos.dao.inmemory.InmemoryProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.ProductRepository;
 
 @SuppressWarnings("NonAsciiCharacters")
+@ActiveProfiles("test")
+@Transactional
+@SpringBootTest
 class MenuServiceTest {
 
-    private MenuGroupDao menuGroupDao;
-    private MenuService menuService;
-    private ProductDao productDao;
+    @Autowired
+    private MenuGroupRepository menuGroupDao;
 
-    @BeforeEach
-    void setUp() {
-        menuGroupDao = new InmemoryMenuGroupDao();
-        productDao = new InmemoryProductDao();
-        menuService = new MenuService(new InmemoryMenuDao(), menuGroupDao, new InmemoryMenuProductDao(), productDao);
-    }
+    @Autowired
+    private MenuService menuService;
+
+    @Autowired
+    private ProductRepository productDao;
 
     @DisplayName("list: 전체 메뉴 목록을 조회한다.")
     @Test
@@ -106,7 +108,7 @@ class MenuServiceTest {
                 Collections.singletonList(후라이드_5마리_10만원));
 
         assertThatThrownBy(() -> menuService.create(메뉴그룹이없는_후라이드_5마리세트))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidDataAccessApiUsageException.class);
     }
 
     @DisplayName("create: 메뉴 가격이 구성 단품 가격의 합보다 큰 메뉴 등록 요청시, 메뉴 등록이 실패하고, IllegalArgumentException 반환한다.")
