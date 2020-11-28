@@ -33,7 +33,6 @@ class TableRestControllerTest extends ControllerTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", notNullValue(Long.class)))
-                .andExpect(jsonPath("$.tableGroupId", nullValue(Long.class)))
                 .andExpect(jsonPath("$.numberOfGuests", is(5)))
                 .andExpect(jsonPath("$.empty", is(false)));
     }

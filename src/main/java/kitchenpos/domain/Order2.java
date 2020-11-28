@@ -1,0 +1,50 @@
+package kitchenpos.domain;
+
+import java.time.LocalDateTime;
+
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+
+@Entity
+public class Order2 {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_table_id")
+    private OrderTable2 orderTable;
+    
+    @Enumerated(value = EnumType.STRING)
+    private OrderStatus orderStatus;
+
+    private LocalDateTime orderedTime;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public Long getOrderTableId() {
+        return orderTable.getId();
+    }
+
+    public String getOrderStatus() {
+        return orderStatus.name();
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+}
