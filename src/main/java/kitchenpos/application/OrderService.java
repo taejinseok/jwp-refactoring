@@ -21,6 +21,7 @@ import kitchenpos.repository.MenuRepository;
 
 @Service
 public class OrderService {
+
     private final MenuRepository menuRepository;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
