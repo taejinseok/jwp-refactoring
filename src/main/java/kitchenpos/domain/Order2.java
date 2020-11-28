@@ -11,8 +11,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "orders")
 public class Order2 {
 
     @Id
@@ -22,11 +24,20 @@ public class Order2 {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_table_id")
     private OrderTable2 orderTable;
-    
+
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
 
     private LocalDateTime orderedTime;
+
+    protected Order2() {
+    }
+
+    public Order2(OrderTable2 orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+    }
 
     public Long getId() {
         return id;

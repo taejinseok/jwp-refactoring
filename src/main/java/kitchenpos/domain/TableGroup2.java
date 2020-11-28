@@ -15,7 +15,14 @@ public class TableGroup2 {
     private Long id;
 
     private LocalDateTime createdDate;
-    
+
+    protected TableGroup2() {
+    }
+
+    public TableGroup2(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
     public Long getId() {
         return id;
     }

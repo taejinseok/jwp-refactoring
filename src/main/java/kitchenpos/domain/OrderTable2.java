@@ -61,7 +61,11 @@ public class OrderTable2 {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void changeEmptyStatus(final boolean empty) {
         this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
     }
 }
