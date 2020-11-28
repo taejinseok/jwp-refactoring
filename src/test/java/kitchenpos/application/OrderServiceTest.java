@@ -9,33 +9,38 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.inmemory.InmemoryMenuDao;
-import kitchenpos.dao.inmemory.InmemoryMenuGroupDao;
-import kitchenpos.dao.inmemory.InmemoryMenuProductDao;
 import kitchenpos.dao.inmemory.InmemoryOrderDao;
 import kitchenpos.dao.inmemory.InmemoryOrderLineItemDao;
 import kitchenpos.dao.inmemory.InmemoryOrderTableDao;
-import kitchenpos.dao.inmemory.InmemoryProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 
 @SuppressWarnings("NonAsciiCharacters")
+@ActiveProfiles("test")
+@Transactional
+@SpringBootTest
 class OrderServiceTest {
 
     private OrderService orderService;
@@ -44,33 +49,33 @@ class OrderServiceTest {
 
     private OrderDao orderDao;
 
-    private ProductDao productDao;
+    @Autowired
+    private ProductRepository productRepository;
 
-    private MenuDao menuDao;
+    @Autowired
+    private MenuRepository menuRepository;
 
-    private MenuGroupDao menuGroupDao;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
-    private MenuProductDao menuProductDao;
+    @Autowired
+    private MenuProductRepository menuProductRepository;
 
     @BeforeEach
     void setUp() {
         orderTableDao = new InmemoryOrderTableDao();
         orderDao = new InmemoryOrderDao();
-        productDao = new InmemoryProductDao();
-        menuDao = new InmemoryMenuDao();
-        menuGroupDao = new InmemoryMenuGroupDao();
-        menuProductDao = new InmemoryMenuProductDao();
-        orderService = new OrderService(menuDao, orderDao, new InmemoryOrderLineItemDao(), orderTableDao);
+        orderService = new OrderService(menuRepository, orderDao, new InmemoryOrderLineItemDao(), orderTableDao);
     }
 
     @DisplayName("list: 전체 주문 목록을 조회한다.")
     @Test
     void list() {
         OrderTable 점유중인테이블 = orderTableDao.save(createTable(null, 5, false));
-        Product 후라이드단품 = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
-        MenuGroup 단품그룹 = menuGroupDao.save(createMenuGroup("단품 그룹"));
-        Menu 치킨단품메뉴 = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), 단품그룹.getId(), emptyList()));
-        menuProductDao.save(createMenuProduct(치킨단품메뉴.getId(), 후라이드단품.getId(), 1));
+        Product 후라이드단품 = productRepository.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
+        MenuGroup 단품그룹 = menuGroupRepository.save(createMenuGroup("단품 그룹"));
+        Menu 치킨단품메뉴 = menuRepository.save(new Menu("치킨 세트", BigDecimal.valueOf(15_000), 단품그룹));
+        menuProductRepository.save(new MenuProduct(치킨단품메뉴, 후라이드단품, 1L));
 
         OrderLineItem 단일주문항목 = createOrderLineItem(null, 치킨단품메뉴.getId(), 1);
         Order 새주문요청 = createOrder(점유중인테이블.getId(), null, OrderStatus.COOKING, Lists.list(단일주문항목));
@@ -85,10 +90,10 @@ class OrderServiceTest {
     @Test
     void create() {
         OrderTable 점유중인테이블 = orderTableDao.save(createTable(null, 5, false));
-        Product 후라이드단품 = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
-        MenuGroup 단품그룹 = menuGroupDao.save(createMenuGroup("단품 그룹"));
-        Menu 후라이드단품메뉴 = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), 단품그룹.getId(), emptyList()));
-        menuProductDao.save(createMenuProduct(후라이드단품메뉴.getId(), 후라이드단품.getId(), 1));
+        Product 후라이드단품 = productRepository.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
+        MenuGroup 단품그룹 = menuGroupRepository.save(createMenuGroup("단품 그룹"));
+        Menu 후라이드단품메뉴 = menuRepository.save(new Menu("치킨 세트", BigDecimal.valueOf(15_000), 단품그룹));
+        menuProductRepository.save(new MenuProduct(후라이드단품메뉴, 후라이드단품, 1L));
 
         OrderLineItem 단일주문항목 = createOrderLineItem(null, 후라이드단품메뉴.getId(), 1);
         Order 새주문 = orderService.create(
@@ -118,10 +123,10 @@ class OrderServiceTest {
     @Test
     void create_fail_if_table_is_empty() {
         OrderTable 비어있는테이블 = orderTableDao.save(createTable(null, 0, true));
-        Product 후라이드단품 = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
-        MenuGroup 단품그룹 = menuGroupDao.save(createMenuGroup("단품 그룹"));
-        Menu 후라이드단품메뉴 = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), 단품그룹.getId(), emptyList()));
-        menuProductDao.save(createMenuProduct(후라이드단품메뉴.getId(), 후라이드단품.getId(), 1));
+        Product 후라이드단품 = productRepository.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
+        MenuGroup 단품그룹 = menuGroupRepository.save(createMenuGroup("단품 그룹"));
+        Menu 후라이드단품메뉴 = menuRepository.save(new Menu("치킨 세트", BigDecimal.valueOf(15_000), 단품그룹));
+        menuProductRepository.save(new MenuProduct(후라이드단품메뉴, 후라이드단품, 1L));
 
         OrderLineItem 후라이드단품주문항목 = createOrderLineItem(null, 후라이드단품메뉴.getId(), 1);
         Order 빈테이블에대한주문요청 = createOrder(비어있는테이블.getId(), null, OrderStatus.COOKING, Lists.list(후라이드단품주문항목));
@@ -134,10 +139,10 @@ class OrderServiceTest {
     @Test
     void create_fail_if_order_line_item_contains_duplicate_menu() {
         OrderTable 점유중인테이블 = orderTableDao.save(createTable(null, 5, false));
-        Product 후라이드단품 = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
-        MenuGroup 단품그룹 = menuGroupDao.save(createMenuGroup("단품 그룹"));
-        Menu 후라이드단품메뉴 = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), 단품그룹.getId(), emptyList()));
-        menuProductDao.save(createMenuProduct(후라이드단품메뉴.getId(), 후라이드단품.getId(), 1));
+        Product 후라이드단품 = productRepository.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
+        MenuGroup 단품그룹 = menuGroupRepository.save(createMenuGroup("단품 그룹"));
+        Menu 후라이드단품메뉴 = menuRepository.save(new Menu("치킨 세트", BigDecimal.valueOf(15_000), 단품그룹));
+        menuProductRepository.save(new MenuProduct(후라이드단품메뉴, 후라이드단품, 1L));
 
         OrderLineItem 첫번째주문항목 = createOrderLineItem(null, 후라이드단품메뉴.getId(), 1);
         OrderLineItem 첫번째주문항목과같은품목의주문항목 = createOrderLineItem(null, 후라이드단품메뉴.getId(), 2);

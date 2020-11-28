@@ -13,19 +13,19 @@ import kitchenpos.ui.dto.ProductResponse;
 @Service
 public class ProductService {
 
-    private final ProductRepository productDao;
+    private final ProductRepository productRepository;
 
-    public ProductService(final ProductRepository productDao) {
-        this.productDao = productDao;
+    public ProductService(final ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
     public ProductResponse create(final ProductCreateRequest createRequest) {
-        Product newProduct = productDao.save(createRequest.toEntity());
+        Product newProduct = productRepository.save(createRequest.toEntity());
         return ProductResponse.of(newProduct);
     }
 
     public List<ProductResponse> list() {
-        return ProductResponse.listOf(productDao.findAll());
+        return ProductResponse.listOf(productRepository.findAll());
     }
 }

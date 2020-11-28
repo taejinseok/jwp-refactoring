@@ -14,19 +14,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 
 import kitchenpos.application.OrderService;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 
 @SuppressWarnings("NonAsciiCharacters")
 class OrderRestControllerTest extends ControllerTest {
@@ -38,16 +39,16 @@ class OrderRestControllerTest extends ControllerTest {
     OrderTableDao orderTableDao;
 
     @Autowired
-    ProductDao productDao;
+    ProductRepository productRepository;
 
     @Autowired
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    MenuDao menuDao;
+    MenuRepository menuRepository;
 
     @Autowired
-    MenuProductDao menuProductDao;
+    MenuProductRepository menuProductRepository;
 
     @Autowired
     OrderDao orderDao;
@@ -56,10 +57,10 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     void create() throws Exception {
         OrderTable 점유중인테이블 = orderTableDao.save(createTable(null, 5, false));
-        Product 후라이드단품 = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
-        MenuGroup 단품메뉴그룹 = menuGroupDao.save(createMenuGroup("단품 메뉴"));
-        Menu 후라이드한마리세트 = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), 단품메뉴그룹.getId(), null));
-        menuProductDao.save(createMenuProduct(후라이드한마리세트.getId(), 후라이드단품.getId(), 1));
+        Product 후라이드단품 = productRepository.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
+        MenuGroup 단품메뉴그룹 = menuGroupRepository.save(createMenuGroup("단품 메뉴"));
+        Menu 후라이드한마리세트 = menuRepository.save(new Menu("치킨 세트", BigDecimal.valueOf(15_000), 단품메뉴그룹));
+        menuProductRepository.save(new MenuProduct(후라이드한마리세트, 후라이드단품, 1L));
 
         OrderLineItem 주문항목 = createOrderLineItem(null, 후라이드한마리세트.getId(), 1);
         Order 생성하려는주문 = createOrder(점유중인테이블.getId(), null, OrderStatus.COOKING, Lists.list(주문항목));
@@ -80,10 +81,10 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     void list() throws Exception {
         OrderTable 점유중인테이블 = orderTableDao.save(createTable(null, 5, false));
-        Product 후라이드단품 = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
-        MenuGroup 단품메뉴그룹 = menuGroupDao.save(createMenuGroup("단품 그룹"));
-        Menu 후라이드한마리세트 = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), 단품메뉴그룹.getId(), null));
-        menuProductDao.save(createMenuProduct(후라이드한마리세트.getId(), 후라이드단품.getId(), 1));
+        Product 후라이드단품 = productRepository.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
+        MenuGroup 단품메뉴그룹 = menuGroupRepository.save(createMenuGroup("단품 그룹"));
+        Menu 후라이드한마리세트 = menuRepository.save(new Menu("치킨 세트", BigDecimal.valueOf(15_000), 단품메뉴그룹));
+        menuProductRepository.save(new MenuProduct(후라이드한마리세트, 후라이드단품, 1L));
 
         OrderLineItem 주문항목 = createOrderLineItem(null, 후라이드한마리세트.getId(), 1);
         Order 생성하려는주문 = createOrder(점유중인테이블.getId(), null, OrderStatus.COOKING, Lists.list(주문항목));

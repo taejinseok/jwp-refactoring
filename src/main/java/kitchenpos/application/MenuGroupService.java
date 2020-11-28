@@ -13,20 +13,20 @@ import kitchenpos.ui.dto.MenuGroupResponse;
 @Service
 public class MenuGroupService {
 
-    private final MenuGroupRepository menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
 
-    public MenuGroupService(final MenuGroupRepository menuGroupDao) {
-        this.menuGroupDao = menuGroupDao;
+    public MenuGroupService(final MenuGroupRepository menuGroupRepository) {
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     @Transactional
     public MenuGroupResponse create(final MenuGroupCreateRequest createRequest) {
-        MenuGroup createdMenuGroup = menuGroupDao.save(createRequest.toEntity());
+        MenuGroup createdMenuGroup = menuGroupRepository.save(createRequest.toEntity());
         return MenuGroupResponse.of(createdMenuGroup);
     }
 
     public List<MenuGroupResponse> list() {
-        List<MenuGroup> menuGroups = menuGroupDao.findAll();
+        List<MenuGroup> menuGroups = menuGroupRepository.findAll();
         return MenuGroupResponse.listOf(menuGroups);
     }
 }

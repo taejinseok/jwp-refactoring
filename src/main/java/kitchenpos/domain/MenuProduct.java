@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class MenuProduct {
@@ -11,9 +13,24 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    private Long menuId;
-    private Long productId;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
     private long quantity;
+
+    protected MenuProduct() {
+    }
+
+    public MenuProduct(Menu menu, Product product, Long quantity) {
+        this.menu = menu;
+        this.product = product;
+        this.quantity = quantity;
+    }
 
     public Long getSeq() {
         return seq;
@@ -23,20 +40,20 @@ public class MenuProduct {
         this.seq = seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Menu getMenu() {
+        return menu;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public void setMenu(final Menu menu) {
+        this.menu = menu;
     }
 
-    public Long getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductId(final Long productId) {
-        this.productId = productId;
+    public void setProduct(final Product product) {
+        this.product = product;
     }
 
     public long getQuantity() {
@@ -45,5 +62,13 @@ public class MenuProduct {
 
     public void setQuantity(final long quantity) {
         this.quantity = quantity;
+    }
+
+    public Long getMenuId() {
+        return menu.getId();
+    }
+
+    public Long getProductId() {
+        return product.getId();
     }
 }
