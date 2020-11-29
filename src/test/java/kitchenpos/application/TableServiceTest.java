@@ -33,7 +33,7 @@ import kitchenpos.ui.dto.OrderTableWithTableGroupResponse;
 @ActiveProfiles("test")
 @SpringBootTest
 @Transactional
-class TableServiceTest2 {
+class TableServiceTest {
 
     @Autowired
     private TableService tableService;

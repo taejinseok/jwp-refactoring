@@ -30,6 +30,18 @@ public class OrderResponse {
                 order.getOrderStatus(), order.getOrderedTime(), orderLineItemResponses);
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
     public Long getOrderTableId() {
         return orderTableId;
     }

@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import static kitchenpos.domain.OrderStatus.*;
+
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
@@ -39,6 +41,10 @@ public class Order2 {
         this.orderedTime = orderedTime;
     }
 
+    public static Order2 ofCooking(OrderTable2 orderTable) {
+        return new Order2(orderTable, COOKING, LocalDateTime.now());
+    }
+
     public Long getId() {
         return id;
     }
@@ -57,5 +63,9 @@ public class Order2 {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
+    }
+
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
     }
 }
