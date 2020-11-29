@@ -19,6 +19,7 @@ import kitchenpos.ui.dto.OrderTableWithTableGroupResponse;
 
 @Service
 public class TableService {
+
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 

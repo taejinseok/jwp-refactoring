@@ -15,6 +15,7 @@ import kitchenpos.ui.dto.MenuGroupResponse;
 
 @RestController
 public class MenuGroupRestController {
+
     private final MenuGroupService menuGroupService;
 
     public MenuGroupRestController(final MenuGroupService menuGroupService) {

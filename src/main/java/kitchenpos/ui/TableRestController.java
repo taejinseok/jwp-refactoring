@@ -20,6 +20,7 @@ import kitchenpos.ui.dto.OrderTableWithTableGroupResponse;
 
 @RestController
 public class TableRestController {
+    
     private final TableService tableService;
 
     public TableRestController(TableService tableService) {

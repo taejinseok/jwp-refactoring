@@ -25,6 +25,7 @@ import kitchenpos.ui.dto.MenuResponse;
 
 @Service
 public class MenuService {
+    
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;

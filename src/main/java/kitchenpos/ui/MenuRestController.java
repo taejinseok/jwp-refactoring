@@ -17,6 +17,7 @@ import kitchenpos.ui.dto.MenuResponse;
 
 @RestController
 public class MenuRestController {
+    
     private final MenuService menuService;
 
     public MenuRestController(final MenuService menuService) {

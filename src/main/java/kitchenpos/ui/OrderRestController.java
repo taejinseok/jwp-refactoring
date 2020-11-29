@@ -18,6 +18,7 @@ import kitchenpos.ui.dto.OrderStatusChangeRequest;
 
 @RestController
 public class OrderRestController {
+    
     private final OrderService orderService;
 
     public OrderRestController(final OrderService orderService) {
