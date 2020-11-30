@@ -2,10 +2,6 @@ package kitchenpos.ui.dto;
 
 import java.util.List;
 
-import kitchenpos.domain.Order2;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable2;
-
 public class OrderCreateRequest {
 
     private Long orderTableId;

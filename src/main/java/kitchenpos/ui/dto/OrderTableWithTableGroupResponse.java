@@ -3,7 +3,7 @@ package kitchenpos.ui.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import kitchenpos.domain.OrderTable2;
+import kitchenpos.domain.OrderTable;
 
 public class OrderTableWithTableGroupResponse {
 
@@ -19,12 +19,12 @@ public class OrderTableWithTableGroupResponse {
         this.empty = empty;
     }
 
-    public static OrderTableWithTableGroupResponse of(OrderTable2 table) {
+    public static OrderTableWithTableGroupResponse of(OrderTable table) {
         return new OrderTableWithTableGroupResponse(table.getId(), table.getTableGroupId(), table.getNumberOfGuests(),
                 table.isEmpty());
     }
 
-    public static List<OrderTableWithTableGroupResponse> listOf(List<OrderTable2> tables) {
+    public static List<OrderTableWithTableGroupResponse> listOf(List<OrderTable> tables) {
         return tables.stream()
                 .map(OrderTableWithTableGroupResponse::of)
                 .collect(Collectors.toList());

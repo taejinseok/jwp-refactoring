@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable2;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.ui.dto.OrderTableChangeEmptyRequest;
@@ -30,18 +30,18 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest createRequest) {
-        OrderTable2 savedTable = orderTableRepository.save(createRequest.toEntity());
+        OrderTable savedTable = orderTableRepository.save(createRequest.toEntity());
         return OrderTableResponse.of(savedTable);
     }
 
     public List<OrderTableWithTableGroupResponse> list() {
-        List<OrderTable2> tables = orderTableRepository.findAll();
+        List<OrderTable> tables = orderTableRepository.findAll();
         return OrderTableWithTableGroupResponse.listOf(tables);
     }
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
-        final OrderTable2 savedOrderTable = orderTableRepository.findById(orderTableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
@@ -67,7 +67,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        final OrderTable2 savedOrderTable = orderTableRepository.findById(orderTableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (savedOrderTable.isEmpty()) {

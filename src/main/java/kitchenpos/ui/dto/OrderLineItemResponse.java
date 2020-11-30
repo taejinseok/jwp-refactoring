@@ -3,7 +3,7 @@ package kitchenpos.ui.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import kitchenpos.domain.OrderLineItem2;
+import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemResponse {
 
@@ -22,12 +22,12 @@ public class OrderLineItemResponse {
         this.quantity = quantity;
     }
 
-    public static OrderLineItemResponse of(OrderLineItem2 orderLineItem) {
+    public static OrderLineItemResponse of(OrderLineItem orderLineItem) {
         return new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrderId(),
                 orderLineItem.getMenuId(), orderLineItem.getQuantity());
     }
 
-    public static List<OrderLineItemResponse> listOf(List<OrderLineItem2> orderLineItems) {
+    public static List<OrderLineItemResponse> listOf(List<OrderLineItem> orderLineItems) {
         return orderLineItems.stream()
                 .map(OrderLineItemResponse::of)
                 .collect(Collectors.toList());

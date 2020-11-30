@@ -12,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order2;
-import kitchenpos.domain.OrderLineItem2;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable2;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
@@ -64,22 +64,22 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderTable2 orderTable = orderTableRepository.findById(createRequest.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(createRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
-        Order2 order = Order2.ofCooking(orderTable);
+        Order order = Order.ofCooking(orderTable);
 
-        final Order2 savedOrder = orderRepository.save(order);
+        final Order savedOrder = orderRepository.save(order);
 
-        List<OrderLineItem2> orderLineItemList = orderLineItems.stream()
+        List<OrderLineItem> orderLineItemList = orderLineItems.stream()
                 .map(orderLineItemRequest -> {
                     Menu menu = findMenu(menus, orderLineItemRequest);
                     long quantity = orderLineItemRequest.getQuantity();
-                    return new OrderLineItem2(savedOrder, menu, quantity);
+                    return new OrderLineItem(savedOrder, menu, quantity);
                 })
                 .collect(toList());
 
@@ -96,10 +96,10 @@ public class OrderService {
     }
 
     public List<OrderResponse> list() {
-        final List<Order2> orders = orderRepository.findAll();
-        List<OrderLineItem2> orderLineItems = orderLineItemRepository.findAllByOrderIn(orders);
+        final List<Order> orders = orderRepository.findAll();
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderIn(orders);
         List<OrderResponse> result = new ArrayList<>();
-        for (Order2 order : orders) {
+        for (Order order : orders) {
             List<OrderLineItemResponse> collect = orderLineItems.stream()
                     .filter(orderLineItem -> Objects.equals(orderLineItem.getOrderId(), order.getId()))
                     .collect(collectingAndThen(toList(), OrderLineItemResponse::listOf));
@@ -111,7 +111,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest statusChangeRequest) {
-        final Order2 savedOrder = orderRepository.findById(orderId)
+        final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
@@ -121,7 +121,7 @@ public class OrderService {
         final OrderStatus orderStatus = OrderStatus.valueOf(statusChangeRequest.getOrderStatus());
         savedOrder.changeOrderStatus(orderStatus);
 
-        List<OrderLineItem2> orderLineItems = orderLineItemRepository.findAllByOrder(savedOrder);
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrder(savedOrder);
         List<OrderLineItemResponse> orderLineItemResponses = OrderLineItemResponse.listOf(orderLineItems);
 
         return OrderResponse.of(savedOrder, orderLineItemResponses);

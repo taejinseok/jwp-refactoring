@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import kitchenpos.domain.Order2;
-import kitchenpos.domain.OrderLineItem2;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 
-public interface OrderLineItemRepository extends JpaRepository<OrderLineItem2, Long> {
+public interface OrderLineItemRepository extends JpaRepository<OrderLineItem, Long> {
     // List<OrderLineItem2> findByOrderIn(List<Order2> orders);
-    List<OrderLineItem2> findAllByOrderIn(List<Order2> orders);
+    List<OrderLineItem> findAllByOrderIn(List<Order> orders);
 
-    List<OrderLineItem2> findAllByOrder(Order2 order);
+    List<OrderLineItem> findAllByOrder(Order order);
 }
